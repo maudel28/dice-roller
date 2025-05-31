@@ -49,14 +49,25 @@ and paste this content:
 ```Dockerfile
 FROM python:3.9
 
+# Set working directory
 WORKDIR /app
 
+# Copy only the requirements file (code will be mounted at runtime)
 COPY requirements.txt /app/
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Create a virtual environment in a dedicated folder
+RUN python -m venv /opt/venv
 
+# Install dependencies inside the virtual environment
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Add the virtual environment to the PATH so "python" and "pip" point to the venv versions
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Expose the port used in the Flask app
 EXPOSE 8080
 
+# Start the Flask app
 CMD ["python", "app.py"]
 ```
 
