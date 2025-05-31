@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dice Roller</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: {{ config['background_color'] }};
+      font-family: Arial, sans-serif;
+    }
+
+    #roll-button {
+      background-color: {{ config['button_color'] }};
+      color: white;
+      padding: 12px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #dice-container{
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+    }
+
+    .face-zero {
+        font-size: 75px;
+    }
+
+    .first-face {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .dice {
+        padding: 4px;
+        background-color: {{ config['dice_color'] }};
+        width: 104px;
+        height: 104px;
+        border-radius: 10%;
+        margin-right : 10px;
+    }
+    .dot{
+        display: block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: {{ config['background_color'] }};
+    }
+
+    .second-face{
+        display: flex ;
+        justify-content: space-between;
+    }
+
+    .second-face .dot:nth-of-type(2) {
+        align-self: flex-end;
+    }
+
+    .third-face {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .third-face .dot:nth-of-type(1) {
+        align-self :flex-end;
+    }
+
+    .third-face .dot:nth-of-type(2) {
+        align-self :center;
+    }
+
+
+    .fourth-face , .sixth-face, .fifth-face{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .fourth-face .column , .sixth-face .column, .fifth-face .column{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .fifth-face .column:nth-of-type(2) {
+        justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="dice-container">
+    <div class="dice face-zero" id="face0">🎲</span></div>
+    <div class="dice first-face" id="face1"><span class="dot"></span></div>
+    <div class="dice second-face" id="face2">
+      <span class="dot"></span><span class="dot"></span>
+    </div>
+    <div class="dice third-face" id="face3">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <div class="dice fourth-face" id="face4">
+      <div class="column"><span class="dot"></span><span class="dot"></span></div>
+      <div class="column"><span class="dot"></span><span class="dot"></span></div>
+    </div>
+    <div class="dice fifth-face" id="face5">
+      <div class="column"><span class="dot"></span><span class="dot"></span></div>
+      <div class="column"><span class="dot"></span></div>
+      <div class="column"><span class="dot"></span><span class="dot"></span></div>
+    </div>
+    <div class="dice sixth-face" id="face6">
+      <div class="column">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div class="column">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="button-container">
+    <button id="roll-button">Roll Dice</button>
+  </div>
+
+  <script>
+  const face0 = document.getElementById("face0");
+  const faces = [
+    document.getElementById("face1"),
+    document.getElementById("face2"),
+    document.getElementById("face3"),
+    document.getElementById("face4"),
+    document.getElementById("face5"),
+    document.getElementById("face6")
+  ];
+
+  const button = document.getElementById("roll-button");
+  const spinDuration = {{ config['spin_duration'] * 1000 }}; // ms
+
+  function hideAllFaces() {
+    face0.style.display = "none";
+    faces.forEach(face => face.style.display = "none");
+  }
+
+  function showFace(n) {
+    hideAllFaces();
+    faces[n - 1].style.display = "flex";
+  }
+
+  // Mostrar face0 al inicio
+  hideAllFaces();
+  face0.style.display = "flex";
+
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    let index = 0;
+    const interval = 120;
+    let elapsed = 0;
+
+    const animation = setInterval(() => {
+      faces.forEach(face => face.style.backgroundColor = "{{ config['dice_color'] }}");
+      showFace((index % 6) + 1);
+      index++;
+      elapsed += interval;
+      
+
+      if (elapsed >= spinDuration) {
+        clearInterval(animation);
+        fetch("/roll")
+          .then(res => res.json())
+          .then(data => {
+            showFace(data.result);
+            faces[data.result - 1].style.backgroundColor = "{{ config['dice_color_result'] }}";
+            button.disabled = false;
+          });
+      }
+    }, interval);
+  });
+</script>
+
+
+</body>
+</html>

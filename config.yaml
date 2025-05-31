@@ -1,0 +1,5 @@
+background_color: "#ffffff"
+button_color: "#4CAF50"
+dice_color: "#47A9FF"
+dice_color_result: "#f23f3f"
+spin_duration: 3  # seconds
