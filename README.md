@@ -1,6 +1,6 @@
 # 🎲 Dice Roller (Flask App)
 
-Welcome to **Dice Roller** — a fun and simple web app where you click a button and watch the dice roll with animation before showing a random result! Built using **Python Flask** and styled with pure **HTML/CSS** magic ✨
+Welcome to **Dice Roller** — a fun and simple web app where you click a button and watch the dice roll with animation before showing a random result! Built using **Python Flask** and styled with pure **HTML, CSS and JS** magic ✨
 
 ---
 
